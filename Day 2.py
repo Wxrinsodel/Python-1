@@ -20,7 +20,7 @@ Data type
 
 """
 
-# for data type : DONT FOR GET TO TYPE """PRINT"""
+# for data type : DONT FORGET TO TYPE """PRINT"""
 print(type(0.89))
 
 # if we want to check if the first one is correct for the second one like:
