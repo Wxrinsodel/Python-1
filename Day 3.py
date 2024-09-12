@@ -127,9 +127,16 @@ print(a)
 
 # Logical Operators
 
-a < 5
-b > 4
-c == 5
-d >= 7
+a = 6
+
+7 < 5
+a > 4
+a == 5
+a >= 4
 a <= 8
 a != 9
+
+2 <= 4
+
+
+print(c)
