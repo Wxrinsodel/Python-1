@@ -1,20 +1,19 @@
 #Loop & for loop == for loop is you know how many time you want to loop
 
-Loop
+#Loop
 
+"""
 While CONDITION:
     print()
 
 ex. while Ture:
     print("Hello") >> it will run until the computer can not handle
-
+"""
 
 number = 1
 while number <= 20:
     print(number)
     number += 1
-
-#loop
 
 number = 1 
 while True:
@@ -26,7 +25,7 @@ while True:
         continue
     
     if number == 1:
-        pass #
+        pass
     number += 1
 
  #for loop >> range(start,stop,step)
