@@ -38,7 +38,8 @@ def greeting() -> None :
     while True:
         user_input = input("(Yes/No): ")
 
-        if user_input.lower() == "yes":
+        if user_input.lower() == "yes": 
+            """ all input will result in lowercase letters """
             print("Your fate is now in your hands.\n"
                   "May the odds be ever in your favor... or against you.\n")
             input("Go ahead, use me as you wish, even stab me in"
@@ -59,6 +60,7 @@ def greeting() -> None :
                   " as I thought..\n"
                   "One more chance. The dice hold the key to your future."
                   " Are you ready to roll and see what unfolds?")
+
 
 # Dice art for each face of a dice
 dice_art = {
@@ -96,14 +98,18 @@ dice_art = {
 
 
 def roll_dice(num_of_dice: int) -> list[int]:
+    """ the function returns a list of integers. 
+        """
+    
     return [random.randint(1, 6) for _ in range(num_of_dice)]
 
 
 # Print horizontal dice
 def display_dice(dice: int):
-    for line in range(5):  # 5 lines per dice face
+    for line in range(5):  
+        """ 5 lines per dice face """
         for roll in dice:
-            print(dice_art.get(roll)[line], end=" ")
+            print(dice_art.get(roll)[line], end=" ") 
         print()
 
 
@@ -118,7 +124,9 @@ def play_game():
     budget = starting_budget
     win_count = 0
 
-    # Using dictionaries for costs, guess ranges, and rewards
+    """ Using dictionaries for costs, guess ranges, and rewards
+        """
+    
     dice_mapping = {1: (100, 6), 2: (200, 12), 3: (250, 18)}
     reward_mapping = {1: 300, 2: 500, 3: 1000}
 
@@ -184,6 +192,7 @@ def play_game():
                    " will roll in your favor.")
 
     print(f"\nThe curtain falls on another thrilling game of chance.\n")
+    
     if budget < starting_budget:
         print(f"Your final budget: {budget} coins")
         input("Never mind. Thank you for playing. Your presence has been"
