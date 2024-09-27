@@ -146,8 +146,9 @@ def play_game():
                   " Don't make me repeat myself.")
             continue
 
-        cost, guess_range = dice_mapping[num_of_dice] #instead of using if/else, I use dictionary.
-
+        cost, guess_range = dice_mapping[num_of_dice] 
+            """ instead of using if/else, I use dictionary.
+               """
         if budget < cost:
             print("It seems your luck is as limited as your funds. \n"
                   "Perhaps it's time for you to find a sugar daddy or "
