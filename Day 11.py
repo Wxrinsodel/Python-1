@@ -2,13 +2,11 @@
 def function_name():
     # What you do
   
-def print_greeting():
-    """
-    This function will print hello for 3 times.
-    """
-    print('Hello')
-    print('Hello')
-    print('Hello')
+    def print_greeting():
+    #This function will print hello for 3 times.
+        print('Hello')
+        print('Hello')
+        print('Hello')
 
 # input and output
 def greet_person(person_name):
@@ -54,17 +52,15 @@ print(add_two_number(3, 5)) #8
 def calculate_price_v2(num_apple, apple_price=50):
     return num_apple * apple_price
   
-#calculate_price_v2(3, 40)
-calculate_price_v2(num_apple=10, apple_price=20) #200
+    calculate_price_v2(3, 40)
+    calculate_price_v2(num_apple=10, apple_price=20) #200
 
-# calculate_price_v3(3, 2, 60, 10)
-calculate_price_v3(3, 2)
+def calculate_price_v3(3, 2, 60, 10):
+    calculate_price_v3(3, 2)
 # positional arguments, keyword arguments
 # positional before keyword
-calculate_price_v3(3, 5, banana_price=70)
+    calculate_price_v3(3, 5, banana_price=70)
 
-calculate_price_v3(3, num_banana=2, banana_price=70) #290
-calculate_price_v3(3, banana_price=70, num_banana=2) #290
-
-
+    calculate_price_v3(3, num_banana=2, banana_price=70) #290
+    calculate_price_v3(3, banana_price=70, num_banana=2) #290
 
