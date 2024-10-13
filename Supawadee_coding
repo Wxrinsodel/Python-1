@@ -1,0 +1,66 @@
+def num_gradient(func, point, delta=1e-6):
+    """Calculate the numerical gradient of a function at a given point."""
+    grad = []
+    for i in range(len(point)):
+        # Create a point slightly perturbed in the positive direction
+        plus_delta = point[:]
+        plus_delta[i] += delta
+        # Create a point slightly perturbed in the negative direction
+        minus_delta = point[:]
+        minus_delta[i] -= delta
+        # Approximate the gradient
+        gradient_value = (func(*plus_delta) - func(*minus_delta)) / (2 * delta)
+        grad.append(gradient_value)
+    return grad
+
+# Function 1: Find the minimum point of f(x) = x^2 + x + 1 using gradient descent
+def var_gradient_des_single(func, initial_guess, learning_rate=0.01, tolerance=1e-6, max_iter=1000):
+    current_x = initial_guess
+    for _ in range(max_iter):
+        grad_value = num_gradient(func, [current_x])[0]
+        next_x = current_x - learning_rate * grad_value
+        
+        if abs(next_x - current_x) < tolerance:
+            break
+        current_x = next_x
+        
+    return current_x, func(current_x)
+
+# Function 2: Generalize the first function to work with any single-variable function
+def find_min_single_var(func, initial_guess, learning_rate=0.01, tolerance=1e-6, max_iter=1000):
+    return var_gradient_des_single(func, initial_guess, learning_rate, tolerance, max_iter)
+
+# Example function f(x) = x^2 + x + 1
+def function_1(x):
+    return x**2 + x + 1
+
+# Usage for f(x) = x^2 + x + 1
+min_point_1, min_value_1 = find_min_single_var(function_1, initial_guess=0)
+print(f"Minimum point of f(x) = x^2 + x + 1: x = {min_point_1}, f(x) = {min_value_1}")
+
+
+# Function 3: Find the minimum point of f(x, y) = (x - 2)^2 + 2(y - 3)^2 using gradient descent
+def var_gradient_des_two(func, initial_guess, learning_rate=0.01, tolerance=1e-6, max_iter=1000):
+    current_x, current_y = initial_guess
+    for _ in range(max_iter):
+        grad_values = num_gradient(func, [current_x, current_y])
+        next_x = current_x - learning_rate * grad_values[0]
+        next_y = current_y - learning_rate * grad_values[1]
+        
+        if abs(next_x - current_x) < tolerance and abs(next_y - current_y) < tolerance:
+            break
+        current_x, current_y = next_x, next_y
+        
+    return current_x, current_y, func(current_x, current_y)
+
+# Function 4: Generalize the third function to work with any function involving two variables
+def find_min_two_var(func, initial_guess, learning_rate=0.01, tolerance=1e-6, max_iter=1000):
+    return var_gradient_des_two(func, initial_guess, learning_rate, tolerance, max_iter)
+
+# Example function f(x, y) = (x - 2)^2 + 2(y - 3)^2
+def function_3(x, y):
+    return (x - 2)**2 + 2 * (y - 3)**2
+
+# Usage for f(x, y) = (x - 2)^2 + 2(y - 3)^2
+min_point_2, min_point_2_y, min_value_2 = find_min_two_var(function_3, initial_guess=(0, 0))
+print(f"Minimum point of f(x, y) = (x - 2)^2 + 2(y - 3)^2: x = {min_point_2}, y = {min_point_2_y}, f(x, y) = {min_value_2}")
