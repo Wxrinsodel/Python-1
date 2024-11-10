@@ -1,0 +1,414 @@
+from typing import List, Dict, Tuple, Optional
+import random
+
+# Constants
+STARTING_BUDGET = 1200
+DICE_MAPPING = {1: (100, 6), 2: (200, 12), 3: (250, 18)}
+REWARD_MAPPING = {1: 300, 2: 500, 3: 1000}
+MAX_ROUNDS = 6
+COMPETITION_REWARD = 1000
+
+class Setting:
+    """Base class for game settings and configurations."""
+    def __init__(self) -> None:
+        self.starting_budget = STARTING_BUDGET
+        self.budget = self.starting_budget
+        self.win_count = 0
+        self.rounds_played = 0
+        self.dice_mapping = DICE_MAPPING
+        self.reward_mapping = REWARD_MAPPING
+        self.dice_art = self._create_dice_art()
+        self.win_message = ""
+
+    def _create_dice_art(self) -> Dict[int, Tuple[str, ...]]:
+        """Create ASCII art representations of dice faces."""
+        return {
+            1: ("┌─────────┐",
+                "│         │",
+                "│    ●    │",
+                "│         │",
+                "└─────────┘"),
+            2: ("┌─────────┐",
+                "│  ●      │",
+                "│         │",
+                "│      ●  │",
+                "└─────────┘"),
+            3: ("┌─────────┐",
+                "│  ●      │",
+                "│    ●    │",
+                "│      ●  │",
+                "└─────────┘"),
+            4: ("┌─────────┐",
+                "│  ●   ●  │",
+                "│         │",
+                "│  ●   ●  │",
+                "└─────────┘"),
+            5: ("┌─────────┐",
+                "│  ●   ●  │",
+                "│    ●    │",
+                "│  ●   ●  │",
+                "└─────────┘"),
+            6: ("┌─────────┐",
+                "│  ●   ●  │",
+                "│  ●   ●  │",
+                "│  ●   ●  │",
+                "└─────────┘")
+        }
+
+class Dialogue:
+    """Handles all game dialogue and user interactions."""
+    def greeting(self) -> None:
+        input("'Dare to embrace the thrill of uncertainty and seize the day.'")
+        input("Ladies and gentlemen, welcome to the table.\n"
+              "I'm Aventurine, your host for this incredible night.\n")
+        input("As a seasoned strategist and gambler, I'm here"
+              " to guide you through the thrill of the unknown.\n")
+        input("Before we start the show, let me break down the rules for you.")
+        input("You have 6 precious opportunities with 1200 coins"
+            " to roll the dice and test your luck.\n")
+        input("Here's how it works:")
+        input("Roll 1 dice : This will cost you 100 coins."
+            " Guess a number between 1 and 6 and"
+            " have a chance to win '300' coins!")
+        input("Roll 2 die : For 200 coins, you can roll 2 die."
+            " Guess the number between 1 and 12"
+            " And have a chance to win '500' coins!\n"
+            "The higher the stakes, the greater the reward.")
+        input("Roll 3 die : For the truly daring, 250 coins."
+            " Guess a number between 1 and 18.\n"
+            "And have a chance to win '1000' coins!"
+            " This is where the real fortunes are made.")
+        input("So, you think it's simple, do you?\n"
+          "Well, let's see if your luck matches your confidence.\n"
+          "Remember, the game is always a gamble.\n")
+
+    def show_agreement_message(self) -> None:
+        print('Your fate is now in your hands.')
+        input('May the odds be ever in your favor... or against you.')
+
+    def show_caution_message(self) -> None:
+        print("It's never too late to fold.")
+        input("But remember, the greatest fortunes are often"
+              " won by daring to double down.")
+        input("One more chance. The dice hold the key to your future."
+              " Are you ready to roll and see what unfolds?")
+        
+
+
+class Calculator:
+    """Handles game calculations and dice rolling mechanics."""
+    def __init__(self, dice_mapping: Dict, reward_mapping: Dict, 
+                 dice_art: Dict, budget: int) -> None:
+        self.dice_mapping = dice_mapping
+        self.reward_mapping = reward_mapping
+        self.dice_art = dice_art
+        self.budget = budget
+
+    def get_dice_choice(self) -> int:
+        while True:
+            try:
+                num_of_dice = int(input('How many dice do you want to roll? (1/2/3): '))
+                if num_of_dice in self.dice_mapping:
+                    return num_of_dice
+                print("I said, choose between 1, 2, or 3 dice."
+                      " Don't make me repeat myself.")
+            except ValueError:
+                print("I said, choose between 1, 2, or 3 dice."
+                      " Don't make me repeat myself.")
+
+    def get_user_guess(self, guess_range: int) -> int:
+        while True:
+            try:
+                guess = int(input(f'Guess a number between 1 and {guess_range}: '))
+                if 1 <= guess <= guess_range:
+                    return guess
+                print(f"I said, choose a number between 1 and {guess_range}."
+                      " Perhaps you should consider your words")
+            except ValueError:
+                print(f"I said, choose a number between 1 and {guess_range}."
+                      " Perhaps you should consider your words")
+
+    def roll_dice(self, num_of_dice: int) -> List[int]:
+        return [random.randint(1, 6) for _ in range(num_of_dice)]
+
+    def display_dice(self, dice_rolls: List[int]) -> None:
+        for line_idx in range(5):
+            for roll in dice_rolls:
+                print(self.dice_art[roll][line_idx], end=' ')
+            print()
+
+    def calculate_total(self, dice_rolls: List[int]) -> int:
+        return sum(dice_rolls)
+
+    def evaluate_guess(self, guess: int, total: int, num_of_dice: int) -> int:
+        if guess == total:
+            reward = self.reward_mapping.get(num_of_dice, 0)
+            print(f"Congratulations! You've managed to outwit the odds.\n")
+            print(f"Now you own {reward} coins. But remember,"
+                   " fortune favors the bold.\n"
+                   " Will you dare to risk it all and play again?!")
+            return reward
+        else:
+            print(f"Well, well. It's {total}. It seems fortune wasn't"
+                   " on your side this time.\n")
+            input("But remember, the thrill of the game lies" 
+                   " in the uncertainty. Perhaps next time the dice"
+                   " will roll in your favor.")
+            return 0
+
+    def display_insufficient_funds(self) -> None:
+        print("It seems your luck is as limited as your funds.\n"
+              "Perhaps it's time for you to find a sugar daddy or "
+              "sugar mommy to fund your gambling habit."
+              " Just remember, there's no such thing as a free lunch.")
+
+class Competition:
+    """Handles the competition mode of the game."""
+    def __init__(self, budget: int, dice_mapping: Dict, 
+                 reward_mapping: Dict, dice_art: Dict) -> None:
+        self.budget = budget
+        self.dice_mapping = dice_mapping
+        self.reward_mapping = reward_mapping
+        self.dice_art = dice_art
+        self.player_wins = 0
+        self.opponent_name = ""
+        self.opponent_wins = 0
+        self.opponent_budget = 0
+        self.win_chance = 0.0
+
+    def offer_competition(self) -> None:
+        opponents = {
+        'Alhaithem': (
+            4000, 0.8,
+            "Alhaithem is a master strategist.\n"
+            "He trusts only the possibility of the result."
+        ),
+        'Kaveh': (
+            3000, 0.7,
+            "Kaveh is a daring competitor with a bold attitude.\n"
+            "He believes fortune favors the brave."
+        ),
+        'Childe': (
+            7000, 0.9,
+            "Childe is a seasoned veteran with years of experience.\n"
+            "His instincts are sharp, and he has the highest win rate."
+        )
+    }
+
+        for name, (budget, win_chance, description) in opponents.items():
+            print(f'{name} - Budget: {budget} coins - {description}')
+
+        while True:
+            choice = input('Enter the name of your opponent: ').capitalize()
+            opponent = opponents.get(choice)
+            if opponent:
+                self.opponent_name = choice
+                self.opponent_budget, self.win_chance, _ = opponent
+                self.compete()
+                break
+            print("You can't even type a name correctly?"
+                 "Get your act together, or you'll be out of here"
+                 "faster than a cosmic wind.")
+
+    def compete(self) -> None:
+        calculator = Calculator(self.dice_mapping, self.reward_mapping, 
+                              self.dice_art, self.budget)
+
+        for round_num in range(1, 6):
+            print(f'\n--- Competition Round {round_num} ---')
+            print(f'Your current budget: {self.budget} coins')
+            print(f"Opponent's current budget: {self.opponent_budget} coins")
+
+            player_guess = calculator.get_user_guess(12)
+            opponent_guess = random.randint(1, 12)
+            print(f'Opponent guessed: {opponent_guess}')
+        
+            dice_rolls = calculator.roll_dice(2)
+            total = sum(dice_rolls)
+            print('Rolling the dice...')
+            calculator.display_dice(dice_rolls)
+            print(f'The dice total is: {total}')
+            
+            self.play_round(total, player_guess, opponent_guess)
+            
+        self._declare_winner()
+
+    def play_round(self, total: int, player_guess: int, opponent_guess: int) -> None:
+        player_difference = abs(player_guess - total)
+        opponent_difference = abs(opponent_guess - total)
+        
+        if player_difference == opponent_difference:
+            if random.random() < self.win_chance:
+                self.opponent_wins += 1
+                print(f"{self.opponent_name} wins this round by chance!")
+            else:
+                self.player_wins += 1
+                print('You won this round by chance!')
+        elif player_difference < opponent_difference:
+            self.player_wins += 1
+            print("A victory well-earned."
+                  "You've proven your worth as a gambler.")
+        else:
+            self.opponent_wins += 1
+            print(f"A pathetic performance... {self.opponent_name} wins this round!")
+
+    def _declare_winner(self) -> None:
+        print(f"\nCompetition Result: You {self.player_wins} - {self.opponent_wins} Opponent")
+
+        if self.player_wins > self.opponent_wins:
+            print(f"Congratulations! You won the competition"
+                  f"and earned {COMPETITION_REWARD} coins!")
+            self.budget += COMPETITION_REWARD
+            self.budget += self.opponent_budget
+            print(f"Your final budget after winning and taking"
+                  f" {self.opponent_name}\'s money is {self.budget} coins")
+            input("Thank you for playing. A fortunate turn of events."
+                  " We shall see if you can replicate this success.")
+        else:
+            self.opponent_budget += self.budget
+            print(f"Your opponent\'s final budget:"
+                  f"{self.opponent_budget} coins")
+            print("Bankrupt, huh? Well, well, well."
+                  "Looks like the universe has spoken.")
+            input("Sometimes, the only way to learn is through failure."
+                  "Perhaps you should consider a less risky hobby,"
+                  "like knitting or stamp collecting.")
+            input("Never mind. Thank you for playing."
+                  "Your presence has been a... tolerable experience.\n"
+                  "Until next time, may your luck be"
+                  "as limited as your intelligence.")
+
+class HandleEnd:
+    """Handles end-of-game scenarios and competition mode."""
+    def __init__(self, rounds_played: int, win_count: int, budget: int, 
+                 dice_mapping: Dict, reward_mapping: Dict, dice_art: Dict) -> None:
+        self.rounds_played = rounds_played
+        self.win_count = win_count
+        self.budget = budget
+        self.dice_mapping = dice_mapping
+        self.reward_mapping = reward_mapping
+        self.dice_art = dice_art
+        self.win_message = ""
+
+    def evaluate_game_end(self) -> None:
+        """Evaluate the game status after the final round."""
+        if self.rounds_played == MAX_ROUNDS:
+            if self.win_count >= 2:
+                print("\nCongratulations! You've unlocked"
+                      "the competition mode."
+                      "\nLet's see if you can handle the real challenge."
+                      "\nThe universe is watching, and so am I.")
+                self._offer_competition()
+            else:
+                self.display_win_message()
+        else:
+            print(f'Your current budget is... {self.budget} coins.')
+            print("A tough loss, but every great gambler faces setbacks."
+                  "Will you rise again?")
+
+    def display_win_message(self) -> None:
+        win_messages = {
+        6: "Six wins! You've done it! You've conquered the impossible!"
+                  " You are the ultimate gambler, the master of fate."
+                  " The universe bows to your power.",
+
+        5: "Five wins! You're almost there. One more victory,"
+                  " and you'll be immortalized in the annals of"
+                  " gambling history. Can you do it?",
+
+        4: "Four wins? Unbelievable. You've defied the odds, player."
+                  " But the ultimate test is yet to come."
+                  " Can you handle the pressure?",
+
+        3: "Three wins! You're on a roll. But remember,"
+                  " the higher you climb, the harder the fall. So, let's see"
+                  " if you can maintain this incredible streak.",
+
+        2: "Two wins in a row? Impressive."
+                  " But can you keep up the momentum?"
+                  " Or will you crumble under the weight of expectation?",
+
+        1: "A solid start, but remember, thi is just a beginning. \n"
+                  " The true test of a gambler lies in their"
+                  " ability to maintain their composure under pressure."
+    }
+        
+        input("Never mind. Thank you for playing. Your presence has been"
+              " a... tolerable experience.\n"
+              "Until next time, may your luck be as limited as"
+              " your intelligence.")
+        
+   
+        if self.win_count in win_messages:
+            print(win_messages[self.win_count])
+        else:
+            print("A tough loss, but every great gambler faces setbacks. Will you rise again or not?")
+        
+    
+    def _offer_competition(self) -> None:
+        """Trigger the competition mode."""
+        competition = Competition(self.budget, self.dice_mapping, 
+                                  self.reward_mapping, self.dice_art)
+        competition.offer_competition()
+        
+
+class MainPlay(Setting, Dialogue):
+    def play_game(self) -> None:
+        self.greeting()
+        print("Are you ready to roll the dice and dare to win?")
+
+        while True:
+            user_input = input('(Yes/No): ').lower()
+            if user_input == 'yes':
+                self.show_agreement_message()
+                break
+            elif user_input == 'no':
+                self.show_caution_message()
+            else:
+                print("Your silence speaks volumes."
+                      " Perhaps you're not as daring as I thought...")
+                input("One more chance. The dice hold the key to your future."
+                      " Are you ready to roll and see what unfolds?")
+
+        for round_num in range(1, MAX_ROUNDS + 1):
+            self.rounds_played += 1
+            print(f'\n--- Round {round_num} ---')
+            print(f'Current budget: {self.budget} coins')
+
+            calculator = Calculator(self.dice_mapping, 
+                                 self.reward_mapping, 
+                                 self.dice_art, 
+                                 self.budget)
+            
+            num_of_dice = calculator.get_dice_choice()
+            cost, guess_range = self.dice_mapping[num_of_dice]
+
+            if self.budget < cost:
+                calculator.display_insufficient_funds()
+                break
+
+            guess = calculator.get_user_guess(guess_range)
+            self.budget -= cost
+
+            dice_rolls = calculator.roll_dice(num_of_dice)
+            calculator.display_dice(dice_rolls)
+            total = calculator.calculate_total(dice_rolls)
+            reward = calculator.evaluate_guess(guess, total, num_of_dice)
+
+            if reward > 0:
+                print(f'Adding {reward} coins to your budget.')
+                self.budget += reward
+                self.win_count += 1
+
+            print(f"End of round {round_num}."
+                  f" Your current budget is {self.budget} coins")
+
+
+        end_handler = HandleEnd(self.rounds_played, self.win_count, 
+                                self.budget, self.dice_mapping, 
+                                self.reward_mapping, self.dice_art)
+        end_handler.evaluate_game_end()
+        
+
+game = MainPlay()
+game.play_game()
